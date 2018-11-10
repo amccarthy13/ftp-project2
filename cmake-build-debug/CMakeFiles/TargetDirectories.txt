@@ -1,0 +1,3 @@
+/Users/andrewM/CLionProjects/ftp-project2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/andrewM/CLionProjects/ftp-project2/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/andrewM/CLionProjects/ftp-project2/cmake-build-debug/CMakeFiles/ftp_project2.dir
