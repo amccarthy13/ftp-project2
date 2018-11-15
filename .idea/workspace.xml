@@ -13,7 +13,10 @@
   <component name="ChangeListManager">
     <list default="true" id="9a484461-df8d-4b04-9fc6-f14f71e5444a" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pftp" beforeDir="false" afterPath="$PROJECT_DIR$/pftp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pftp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/pftp.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pftp.o" beforeDir="false" afterPath="$PROJECT_DIR$/pftp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rfc959.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/rfc959.pdf" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,8 +32,8 @@
       <file leaf-file-name="pftp.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pftp.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4695">
-              <caret line="313" column="47" selection-start-line="313" selection-start-column="47" selection-end-line="313" selection-end-column="47" />
+            <state relative-caret-position="636">
+              <caret line="176" column="28" selection-start-line="176" selection-start-column="28" selection-end-line="176" selection-end-column="28" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -70,8 +73,8 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
-        <option value="$PROJECT_DIR$/test.txt" />
         <option value="$PROJECT_DIR$/pftp.cpp" />
+        <option value="$PROJECT_DIR$/test.txt" />
       </list>
     </option>
   </component>
@@ -147,20 +150,20 @@
       <option name="presentableId" value="Default" />
       <updated>1541887670652</updated>
       <workItem from="1541887671855" duration="1425000" />
-      <workItem from="1542261041898" duration="13435000" />
+      <workItem from="1542261041898" duration="16779000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="14860000" />
+    <option name="totallyTimeSpent" value="18204000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1440" y="-277" width="1920" height="1177" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="CMake" order="7" visible="true" weight="0.32910246" />
+      <window_info active="true" anchor="bottom" id="CMake" order="7" visible="true" weight="0.32910246" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="2" />
       <window_info anchor="bottom" id="Version Control" order="7" />
@@ -217,8 +220,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pftp.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4695">
-          <caret line="313" column="47" selection-start-line="313" selection-start-column="47" selection-end-line="313" selection-end-column="47" />
+        <state relative-caret-position="636">
+          <caret line="176" column="28" selection-start-line="176" selection-start-column="28" selection-end-line="176" selection-end-column="28" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>

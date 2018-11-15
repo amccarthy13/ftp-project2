@@ -50,7 +50,7 @@ void *downloadHandler(void *arguments) {
     int a1, a2, a3, a4, p1, p2;
     int fileSize;
 
-    struct arg_struct *args = (struct arg_struct *)arguments;
+    struct arg_struct *args = (struct arg_struct *) arguments;
 
     char connection_buf[64];
     char user_buf[64];
@@ -113,7 +113,6 @@ void *downloadHandler(void *arguments) {
     char feedback[100];
     char quit_verify[50];
     char receive_buf[4096];
-    char rest[64];
     int bytes_read;
 
 
@@ -171,8 +170,11 @@ void *downloadHandler(void *arguments) {
     int remainder = fileSize % args->endPos;
     int start = multiplier * args->startPos;
     int end = start + multiplier;
+    if (start != 0) {
+        start += 1;
+    }
     if (args->endPos - 1 == args->startPos) {
-        end += remainder;
+        end += remainder - 1;
     }
 
     char startString[10];
@@ -186,21 +188,46 @@ void *downloadHandler(void *arguments) {
     read(clientSd, (char *) &stream_feedback, sizeof(stream_feedback));
     cout << stream_feedback;
 
-    std::ofstream newFile(args->file, std::ios::out|std::ios::binary);
+    strcpy(cmd, "RETR ");
+    strcat(cmd, args->file);
+    strcat(cmd, "\r\n");
 
+    write(clientSd, (char *) &cmd, strlen(cmd));
+    read(clientSd, (char *) &stream_feedback, sizeof(stream_feedback));
+    cout << stream_feedback;
+    if (strcmp(strtok(stream_feedback, " "), "150") != 0) {
+        exit(0);
+    }
+
+    std::ofstream newFile(args->file, std::ios::out | std::ios::binary);
+
+    newFile.seekp(start, ios::beg);
+    int total_bytes = 0;
+    int new_bytes = 0;
+    int bytes_to_read = end - start;
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
-        if (bytes_read > 0) {
-            newFile.write(receive_buf, bytes_read);
+        total_bytes += bytes_read;
+        if (bytes_read >= 0) {
+            if (total_bytes > bytes_to_read) {
+                new_bytes = total_bytes - bytes_to_read;
+                new_bytes = bytes_read - new_bytes;
+                newFile.write(receive_buf, new_bytes);
+                break;
+            } else {
+                newFile.write(receive_buf, bytes_read);
+            }
         }
     } while (bytes_read > 0);
 
-
-    read(clientSd, (char *) &feedback, sizeof(feedback));
-    cout << feedback;
+    cout << start << "\n";
+    cout << end << "\n";
 
     newFile.close();
     close(dataSd2);
+
+    read(clientSd, (char *) &stream_feedback, sizeof(stream_feedback));
+    cout << stream_feedback;
 
     strcpy(cmd, "QUIT");
     strcat(cmd, "\r\n");
@@ -259,36 +286,36 @@ int main(int argc, char *argv[]) {
         ifstream myFile;
         myFile.open(argv[2]);
         if (myFile.is_open()) {
-            while(!myFile.eof()) {
+            while (!myFile.eof()) {
                 myFile >> input;
-                char* token = strtok(input, ":/@");
+                char *token = strtok(input, ":/@");
                 if (strcmp(token, "ftp") != 0) {
                     cerr << "invalid config file" << endl;
                     exit(0);
                 }
 
-                token = strtok(nullptr,  ":/@");
+                token = strtok(nullptr, ":/@");
                 if (token == nullptr) {
                     cerr << "invalid config file" << endl;
                     exit(0);
                 }
                 strcpy(username, token);
 
-                token = strtok(nullptr,  ":/@");
+                token = strtok(nullptr, ":/@");
                 if (token == nullptr) {
                     cerr << "invalid config file" << endl;
                     exit(0);
                 }
                 strcpy(password, token);
 
-                token = strtok(nullptr,  ":/@");
+                token = strtok(nullptr, ":/@");
                 if (token == nullptr) {
                     cerr << "invalid config file" << endl;
                     exit(0);
                 }
                 strcpy(hostname, token);
 
-                token = strtok(nullptr,  ":/@");
+                token = strtok(nullptr, ":/@");
                 if (token == nullptr) {
                     cerr << "invalid config file" << endl;
                     exit(0);
@@ -318,7 +345,7 @@ int main(int argc, char *argv[]) {
 
         for (int i = 0; i < streamCount; i++) {
             pthread_join(threads[i], nullptr);
-            cout<<"thread joined\n";
+            cout << "thread joined\n";
         }
         return 0;
     }
@@ -484,7 +511,7 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
-    std::ofstream newFile(file, std::ios::out|std::ios::binary);
+    std::ofstream newFile(file, std::ios::out | std::ios::binary);
 
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
