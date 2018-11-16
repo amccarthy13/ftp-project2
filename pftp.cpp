@@ -110,9 +110,8 @@ void *downloadHandler(void *arguments) {
     char temp[200];
     char verify[100];
     char stream_feedback[100];
-    char feedback[100];
     char quit_verify[50];
-    char receive_buf[4096];
+    char receive_buf[1024];
     int bytes_read;
 
 
@@ -169,12 +168,9 @@ void *downloadHandler(void *arguments) {
     int multiplier = fileSize / args->endPos;
     int remainder = fileSize % args->endPos;
     int start = multiplier * args->startPos;
-    int end = start + multiplier;
-    if (start != 0) {
-        start += 1;
-    }
+    int end = start + multiplier - 1;
     if (args->endPos - 1 == args->startPos) {
-        end += remainder - 1;
+        end += remainder;
     }
 
     char startString[10];
@@ -204,7 +200,7 @@ void *downloadHandler(void *arguments) {
     newFile.seekp(start, ios::beg);
     int total_bytes = 0;
     int new_bytes = 0;
-    int bytes_to_read = end - start;
+    int bytes_to_read = end - start + 1;
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
         total_bytes += bytes_read;
@@ -219,9 +215,6 @@ void *downloadHandler(void *arguments) {
             }
         }
     } while (bytes_read > 0);
-
-    cout << start << "\n";
-    cout << end << "\n";
 
     newFile.close();
     close(dataSd2);
