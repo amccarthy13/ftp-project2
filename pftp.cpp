@@ -52,11 +52,9 @@ void *downloadHandler(void *arguments) {
 
     struct arg_struct *args = (struct arg_struct *) arguments;
 
-    char connection_buf[64];
-    char user_buf[64];
-    char pass_buf[64];
-    char socket_buf[64];
-    char cmd[11];
+    char user[11];
+    char pass[16];
+    char buffer[1500];
 
     int clientSd = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSd < 0) {
@@ -75,62 +73,59 @@ void *downloadHandler(void *arguments) {
         exit(0);
     }
 
-    read(clientSd, (char *) &connection_buf, sizeof(connection_buf));
-    cout << connection_buf;
+    read(clientSd, (char *) &buffer, sizeof(buffer));
+    if (strcmp(strtok(buffer, " "), "220") != 0) {
+        cerr << "Failed to connect to server" << endl;
+        exit(0);
+    }
 
-    strcpy(cmd, "USER ");
-    strcat(cmd, args->username);
-    strcat(cmd, "\r\n");
+    strcpy(user, "USER ");
+    strcat(user, args->username);
+    strcat(user, "\r\n");
 
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &user_buf, sizeof(user_buf));
-    cout << user_buf;
+    write(clientSd, (char *) &user, strlen(user));
+    read(clientSd, (char *) &buffer, sizeof(buffer));
+    if (strcmp(strtok(buffer, " "), "331") != 0) {
+        cerr << "Failed to login" << endl;
+        exit(0);
+    }
 
-    strcpy(cmd, "PASS ");
-    strcat(cmd, args->password);
-    strcat(cmd, "\r\n");
+    strcpy(pass, "PASS ");
+    strcat(pass, args->password);
+    strcat(pass, "\r\n");
 
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &pass_buf, sizeof(pass_buf));
-    cout << pass_buf;
-
-    if (strcmp(strtok(pass_buf, " "), "230") != 0) {
+    write(clientSd, (char *) &pass, strlen(pass));
+    read(clientSd, (char *) &buffer, sizeof(buffer));
+    if (strcmp(strtok(buffer, " "), "230") != 0) {
+        cerr << "Failed to login" << endl;
         exit(0);
     }
 
     while (socketPoll(clientSd) == 1) {
-        read(clientSd, (char *) &socket_buf, sizeof(socket_buf));
-        cout << socket_buf << endl;
+        read(clientSd, (char *) &buffer, sizeof(buffer));
     }
     if (socketPoll(clientSd) == -1) {
         cerr << "Error polling the socket" << endl;
     }
 
-
-    char temp[200];
+    char type[12];
+    strcpy(type, args->mode);
+    strcat(type, "\r\n");
     char verify[100];
-    char stream_feedback[100];
-    char quit_verify[50];
-    char receive_buf[1024];
-    int bytes_read;
-
-
-    strcpy(cmd, args->mode);
-    strcat(cmd, "\r\n");
-    write(clientSd, (char *) &cmd, strlen(cmd));
+    write(clientSd, (char *) &type, strlen(type));
     read(clientSd, (char *) &verify, sizeof(verify));
-    cout << verify;
-
 
     if (strcmp(strtok(verify, " "), "200") != 0) {
         cerr << "Failed to switch modes" << endl;
         exit(0);
     }
-    strcpy(cmd, "PASV");
-    strcat(cmd, "\r\n");
-    write(clientSd, (char *) &cmd, strlen(cmd));
+
+    char passive[30];
+    char temp[100];
+    strcpy(passive, "PASV");
+    strcat(passive, "\r\n");
+    write(clientSd, (char *) &passive, strlen(passive));
     read(clientSd, (char *) &temp, sizeof(temp));
-    cout << temp;
 
     sscanf(temp, "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d)",
            &a1, &a2, &a3, &a4, &p1, &p2);
@@ -154,15 +149,16 @@ void *downloadHandler(void *arguments) {
         exit(0);
     }
 
-    strcpy(cmd, "SIZE ");
-    strcat(cmd, args->file);
-    strcat(cmd, "\r\n");
+    char size[30];
+    char temp2[100];
+    strcpy(size, "SIZE ");
+    strcat(size, args->file);
+    strcat(size, "\r\n");
 
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &stream_feedback, sizeof(stream_feedback));
-    cout << stream_feedback;
+    write(clientSd, (char *) &size, strlen(size));
+    read(clientSd, (char *) &temp2, sizeof(temp2));
 
-    sscanf(stream_feedback, "213 %d",
+    sscanf(temp2, "213 %d",
            &fileSize);
 
     int multiplier = fileSize / args->endPos;
@@ -176,35 +172,44 @@ void *downloadHandler(void *arguments) {
     char startString[10];
     snprintf(startString, sizeof(startString), "%d", start);
 
-    strcpy(cmd, "REST ");
-    strcat(cmd, startString);
-    strcat(cmd, "\r\n");
+    char rest[30];
+    char temp3[100];
+    strcpy(rest, "REST ");
+    strcat(rest, startString);
+    strcat(rest, "\r\n");
 
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &stream_feedback, sizeof(stream_feedback));
-    cout << stream_feedback;
+    write(clientSd, (char *) &rest, strlen(rest));
+    read(clientSd, (char *) &temp3, sizeof(temp3));
+    if (strcmp(strtok(temp3, " "), "350") != 0) {
+        cerr << "Could not set restart position" << endl;
+        exit(0);
+    }
 
-    strcpy(cmd, "RETR ");
-    strcat(cmd, args->file);
-    strcat(cmd, "\r\n");
+    char retr[10];
+    char receive_buf[1024];
+    char feedback[200];
+    strcpy(retr, "RETR ");
+    strcat(retr, args->file);
+    strcat(retr, "\r\n");
 
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &stream_feedback, sizeof(stream_feedback));
-    cout << stream_feedback;
-    if (strcmp(strtok(stream_feedback, " "), "150") != 0) {
+    write(clientSd, (char *) &retr, strlen(retr));
+    read(clientSd, (char *) &feedback, sizeof(feedback));
+    if (strcmp(strtok(feedback, " "), "150") != 0) {
+        cerr << "Could not initiate file retrieval" << endl;
         exit(0);
     }
 
     std::ofstream newFile(args->file, std::ios::out | std::ios::binary);
 
-    newFile.seekp(start, ios::beg);
+    newFile.seekp(start);
     int total_bytes = 0;
     int new_bytes = 0;
+    int bytes_read = 0;
     int bytes_to_read = end - start + 1;
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
         total_bytes += bytes_read;
-        if (bytes_read >= 0) {
+        if (bytes_read > 0) {
             if (total_bytes > bytes_to_read) {
                 new_bytes = total_bytes - bytes_to_read;
                 new_bytes = bytes_read - new_bytes;
@@ -216,18 +221,16 @@ void *downloadHandler(void *arguments) {
         }
     } while (bytes_read > 0);
 
+
     newFile.close();
     close(dataSd2);
 
-    read(clientSd, (char *) &stream_feedback, sizeof(stream_feedback));
-    cout << stream_feedback;
+    char quit[10];
+    strcpy(quit, "QUIT");
+    strcat(quit, "\r\n");
+    write(clientSd, (char *) &quit, strlen(quit));
 
-    strcpy(cmd, "QUIT");
-    strcat(cmd, "\r\n");
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &quit_verify, sizeof(quit_verify));
-    cout << quit_verify;
-
+    cout << "File transfer completed" << endl;
     return nullptr;
 }
 
@@ -328,6 +331,8 @@ int main(int argc, char *argv[]) {
                 streamCount++;
             }
         }
+
+
         pthread_t thread_id;
         for (int i = 0; i < streamCount; i++) {
             stream_args[i].startPos = i;
@@ -388,11 +393,9 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
-    char connection_buf[64];
-    char user_buf[64];
-    char pass_buf[64];
-    char socket_buf[64];
-    char cmd[11];
+    char buffer[1500];
+    char user[11];
+    char pass[16];
 
     int clientSd = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSd < 0) {
@@ -411,66 +414,63 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
-    read(clientSd, (char *) &connection_buf, sizeof(connection_buf));
-    cout << connection_buf;
+    read(clientSd, (char *) &buffer, sizeof(buffer));
+    if (strcmp(strtok(buffer, " "), "220") != 0) {
+        exit(0);
+    }
 
-    strcpy(cmd, "USER ");
-    strcat(cmd, username);
-    strcat(cmd, "\r\n");
+    strcpy(user, "USER ");
+    strcat(user, username);
+    strcat(user, "\r\n");
 
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &user_buf, sizeof(user_buf));
-    cout << user_buf;
+    write(clientSd, (char *) &user, strlen(user));
+    read(clientSd, (char *) &buffer, sizeof(buffer));
 
-    strcpy(cmd, "PASS ");
-    strcat(cmd, password);
-    strcat(cmd, "\r\n");
+    if (strcmp(strtok(buffer, " "), "331") != 0) {
+        exit(0);
+    }
 
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &pass_buf, sizeof(pass_buf));
-    cout << pass_buf;
+    strcpy(pass, "PASS ");
+    strcat(pass, password);
+    strcat(pass, "\r\n");
 
-    if (strcmp(strtok(pass_buf, " "), "230") != 0) {
+    write(clientSd, (char *) &pass, strlen(pass));
+    read(clientSd, (char *) &buffer, sizeof(buffer));
+
+    if (strcmp(strtok(buffer, " "), "230") != 0) {
         exit(0);
     }
 
     while (socketPoll(clientSd) == 1) {
-        read(clientSd, (char *) &socket_buf, sizeof(socket_buf));
-        cout << socket_buf << endl;
+        read(clientSd, (char *) &buffer, sizeof(buffer));
     }
     if (socketPoll(clientSd) == -1) {
         cerr << "Error polling the socket" << endl;
     }
 
 
-    char temp[200];
-    char verify[100];
-    char stream_feedback[100];
-    char feedback[100];
-    char quit_verify[50];
-    char receive_buf[4096];
-    int bytes_read;
-
     int dataSd2;
     int a1, a2, a3, a4, p1, p2;
 
 
-    strcpy(cmd, mode);
-    strcat(cmd, "\r\n");
-    write(clientSd, (char *) &cmd, strlen(cmd));
+    char type[11];
+    strcpy(type, mode);
+    strcat(type, "\r\n");
+    char verify[100];
+    write(clientSd, (char *) &type, strlen(type));
     read(clientSd, (char *) &verify, sizeof(verify));
-    cout << verify;
-
 
     if (strcmp(strtok(verify, " "), "200") != 0) {
         cerr << "Failed to switch modes" << endl;
         exit(0);
     }
-    strcpy(cmd, "PASV");
-    strcat(cmd, "\r\n");
-    write(clientSd, (char *) &cmd, strlen(cmd));
+
+    char passive[30];
+    char temp[100];
+    strcpy(passive, "PASV");
+    strcat(passive, "\r\n");
+    write(clientSd, (char *) &passive, strlen(passive));
     read(clientSd, (char *) &temp, sizeof(temp));
-    cout << temp;
 
     sscanf(temp, "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d)",
            &a1, &a2, &a3, &a4, &p1, &p2);
@@ -491,21 +491,26 @@ int main(int argc, char *argv[]) {
 
     if (connect(dataSd2, (struct sockaddr *) &servAddr3, sizeof(servAddr3)) < 0) {
         cerr << "could not establish connection" << endl;
+        exit(0);
     }
 
-    strcpy(cmd, "RETR ");
-    strcat(cmd, file);
-    strcat(cmd, "\r\n");
+    char retr[10];
+    char receive_buf[1000];
+    char feedback[200];
+    strcpy(retr, "RETR ");
+    strcat(retr, file);
+    strcat(retr, "\r\n");
 
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &stream_feedback, sizeof(stream_feedback));
-    cout << stream_feedback;
-    if (strcmp(strtok(stream_feedback, " "), "150") != 0) {
+    write(clientSd, (char *) &retr, strlen(retr));
+    read(clientSd, (char *) &feedback, sizeof(feedback));
+    if (strcmp(strtok(feedback, " "), "150") != 0) {
+        cerr << "could not retrieve file" << endl;
         exit(0);
     }
 
     std::ofstream newFile(file, std::ios::out | std::ios::binary);
 
+    int bytes_read = 0;
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
         if (bytes_read > 0) {
@@ -513,18 +518,14 @@ int main(int argc, char *argv[]) {
         }
     } while (bytes_read > 0);
 
-
-    read(clientSd, (char *) &feedback, sizeof(feedback));
-    cout << feedback;
-
     newFile.close();
     close(dataSd2);
 
-    strcpy(cmd, "QUIT");
-    strcat(cmd, "\r\n");
-    write(clientSd, (char *) &cmd, strlen(cmd));
-    read(clientSd, (char *) &quit_verify, sizeof(quit_verify));
-    cout << quit_verify;
+    char quit[10];
+    strcpy(quit, "QUIT");
+    strcat(quit, "\r\n");
+    write(clientSd, (char *) &quit, strlen(quit));
+    cout << "Data transfer completed successfully" << endl;
 
     return 0;
 }
