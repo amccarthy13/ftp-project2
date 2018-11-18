@@ -57,6 +57,8 @@ void *downloadHandler(void *arguments) {
     char user[11];
     char pass[16];
     char buffer[1024];
+    char user_buf[1024];
+    char entry_buf[1024];
     char server_log[512];
     char client_log[512];
 
@@ -81,16 +83,16 @@ void *downloadHandler(void *arguments) {
 
     logFlag = strcmp(args->log, "-") != 0;
 
-    read(clientSd, (char *) &buffer, sizeof(buffer));
+    read(clientSd, (char *) &entry_buf, sizeof(buffer));
     strcpy(server_log, "S->C ");
-    strcat(server_log, buffer);
+    strcat(server_log, entry_buf);
     if (logFlag) {
         log_file.write(server_log, strlen(server_log));
     } else {
         cout << server_log;
     }
 
-    if (strcmp(strtok(buffer, " "), "220") != 0) {
+    if (strcmp(strtok(entry_buf, " "), "220") != 0) {
         cerr << "Failed to connect to server" << endl;
         exit(0);
     }
@@ -100,9 +102,9 @@ void *downloadHandler(void *arguments) {
     strcat(user, "\r\n");
 
     write(clientSd, (char *) &user, strlen(user));
-    read(clientSd, (char *) &buffer, sizeof(buffer));
+    read(clientSd, (char *) &user_buf, sizeof(user_buf));
     strcpy(server_log, "S->C ");
-    strcat(server_log, buffer);
+    strcat(server_log, user_buf);
     strcpy(client_log, "C->S ");
     strcat(client_log, user);
     if (logFlag) {
@@ -112,7 +114,7 @@ void *downloadHandler(void *arguments) {
         cout << client_log;
         cout << server_log;
     }
-    if (strcmp(strtok(buffer, " "), "331") != 0) {
+    if (strcmp(strtok(user_buf, " "), "331") != 0) {
         cerr << "Failed to login" << endl;
         exit(0);
     }
@@ -334,10 +336,6 @@ int main(int argc, char *argv[]) {
     char mode[20] = "binary";
     char log[32] = "-";
     bool logFlag;
-    if (argc < 5) {
-        cerr << "not enough arguments provided" << endl;
-        exit(0);
-    }
 
     if (strcmp(argv[1], "-t") == 0 || strcmp(argv[1], "-thread") == 0) {
         if (argc > 3) {
@@ -439,6 +437,11 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    if (argc < 5) {
+        cerr << "not enough arguments provided" << endl;
+        exit(0);
+    }
+
     if (strcmp(argv[1], "-s") == 0) {
         strcpy(hostname, argv[2]);
     } else {
@@ -486,12 +489,11 @@ int main(int argc, char *argv[]) {
 
     logFlag = strcmp(log, "-") != 0;
 
-    char user_buf[256];
-    char pass_buf[512];
-    char connect_buf[256];
-    char poll_buf[256];
     char user[11];
     char pass[16];
+    char buffer[1024];
+    char user_buf[1024];
+    char entry_buf[1024];
     char server_log[512];
     char client_log[512];
 
@@ -514,15 +516,15 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
-    read(clientSd, (char *) &connect_buf, sizeof(connect_buf));
+    read(clientSd, (char *) &entry_buf, sizeof(entry_buf));
     strcpy(server_log, "S->C ");
-    strcat(server_log, connect_buf);
+    strcat(server_log, entry_buf);
     if (logFlag) {
         log_file.write(server_log, strlen(server_log));
     } else {
         cout << server_log;
     }
-    if (strcmp(strtok(connect_buf, " "), "220") != 0) {
+    if (strcmp(strtok(entry_buf, " "), "220") != 0) {
         exit(0);
     }
 
@@ -537,11 +539,11 @@ int main(int argc, char *argv[]) {
     strcpy(client_log, "C->S ");
     strcat(client_log, user);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
 
     if (strcmp(strtok(user_buf, " "), "331") != 0) {
@@ -553,9 +555,9 @@ int main(int argc, char *argv[]) {
     strcat(pass, "\r\n");
 
     write(clientSd, (char *) &pass, strlen(pass));
-    read(clientSd, (char *) &pass_buf, sizeof(pass_buf));
+    read(clientSd, (char *) &buffer, sizeof(buffer));
     strcpy(server_log, "S->C ");
-    strcat(server_log, pass_buf);
+    strcat(server_log, buffer);
     strcpy(client_log, "C->S ");
     strcat(client_log, pass);
     if (logFlag) {
@@ -566,12 +568,12 @@ int main(int argc, char *argv[]) {
         cout << server_log;
     }
 
-    if (strcmp(strtok(pass_buf, " "), "230") != 0) {
+    if (strcmp(strtok(buffer, " "), "230") != 0) {
         exit(0);
     }
 
     while (socketPoll(clientSd) == 1) {
-        read(clientSd, (char *) &poll_buf, sizeof(poll_buf));
+        read(clientSd, (char *) &buffer, sizeof(buffer));
     }
     if (socketPoll(clientSd) == -1) {
         cerr << "Error polling the socket" << endl;
@@ -580,8 +582,9 @@ int main(int argc, char *argv[]) {
     int dataSd2;
     int a1, a2, a3, a4, p1, p2;
 
+
     char passive[30];
-    char temp[256];
+    char temp[100];
     strcpy(passive, "PASV");
     strcat(passive, "\r\n");
     write(clientSd, (char *) &passive, strlen(passive));
@@ -620,19 +623,19 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
-    char retr[10];
+    char retr[15];
     char receive_buf[1024];
-    char retrive_feedback[256];
-    char transfer_feedback[256];
-    char quit_feedback[256];
+    char retr_feedback[200];
+    char transfer_feedback[200];
+    char quit_feedback[200];
     strcpy(retr, "RETR ");
     strcat(retr, file);
     strcat(retr, "\r\n");
 
     write(clientSd, (char *) &retr, strlen(retr));
-    read(clientSd, (char *) &retrive_feedback, sizeof(retrive_feedback));
+    read(clientSd, (char *) &retr_feedback, sizeof(retr_feedback));
     strcpy(server_log, "S->C ");
-    strcat(server_log, retrive_feedback);
+    strcat(server_log, retr_feedback);
     strcpy(client_log, "C->S ");
     strcat(client_log, retr);
     if (logFlag) {
@@ -642,7 +645,7 @@ int main(int argc, char *argv[]) {
         cout <<client_log;
         cout << server_log;
     }
-    if (strcmp(strtok(retrive_feedback, " "), "150") != 0) {
+    if (strcmp(strtok(retr_feedback, " "), "150") != 0) {
         cerr << "could not retrieve file" << endl;
         exit(0);
     }
