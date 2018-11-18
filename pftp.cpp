@@ -68,6 +68,10 @@ void *downloadHandler(void *arguments) {
         exit(0);
     }
     struct hostent *host = gethostbyname(args->hostname);
+    if (host == nullptr) {
+        cerr << "host is invalid" << endl;
+        exit(0);
+    }
     struct sockaddr_in addr;
     bzero((char *) &addr, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -356,7 +360,7 @@ int main(int argc, char *argv[]) {
     int port = 21;
     char username[32] = "anonymous";
     char password[32] = "user@localhost.localnet";
-    char mode[20] = "binary";
+    char mode[20] = "Type I";
     char log[32] = "-";
     bool logFlag;
 
@@ -369,8 +373,6 @@ int main(int argc, char *argv[]) {
                     strcpy(username, argv[i + 1]);
                 } else if (strcmp(argv[i], "-P") == 0 || strcmp(argv[i], "-password") == 0) {
                     strcpy(password, argv[i + 1]);
-                } else if (strcmp(argv[i], "-m") == 0 || strcmp(argv[i], "-mode") == 0) {
-                    strcpy(mode, argv[i + 1]);
                 } else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "-logfile") == 0) {
                     strcpy(log, argv[i + 1]);
                 } else {
@@ -378,14 +380,6 @@ int main(int argc, char *argv[]) {
                     exit(0);
                 }
             }
-        }
-        if (strcmp(mode, "binary") == 0) {
-            strcpy(mode, "Type I");
-        } else if (strcmp(mode, "ASCII") == 0) {
-            strcpy(mode, "Type A");
-        } else {
-            cerr << "invalid mode" << endl;
-            exit(0);
         }
 
         char input[100];
@@ -455,7 +449,6 @@ int main(int argc, char *argv[]) {
 
         for (int i = 0; i < streamCount; i++) {
             pthread_join(threads[i], nullptr);
-            cout << "thread joined\n";
         }
         return 0;
     }
@@ -490,8 +483,6 @@ int main(int argc, char *argv[]) {
                 strcpy(username, argv[i + 1]);
             } else if (strcmp(argv[i], "-P") == 0 || strcmp(argv[i], "-password") == 0) {
                 strcpy(password, argv[i + 1]);
-            } else if (strcmp(argv[i], "-m") == 0 || strcmp(argv[i], "-mode") == 0) {
-                strcpy(mode, argv[i + 1]);
             } else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "-logfile") == 0) {
                 strcpy(log, argv[i + 1]);
             } else {
@@ -501,24 +492,12 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (strcmp(mode, "binary") == 0) {
-        strcpy(mode, "Type I");
-    } else if (strcmp(mode, "ASCII") == 0) {
-        strcpy(mode, "Type A");
-    } else {
-        cerr << "invalid mode" << endl;
-        exit(0);
-    }
-
     logFlag = strcmp(log, "-") != 0;
 
     char user[11];
     char pass[16];
-    char buffer[1024];
-    char user_buf[1024];
-    char entry_buf[1024];
-    char server_log[512];
-    char client_log[512];
+    char server_log[5000];
+    char client_log[5000];
 
     std::ofstream log_file(log, std::ios::out | std::ios::binary);
 
@@ -528,6 +507,10 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
     struct hostent *host = gethostbyname(hostname);
+    if (host == nullptr) {
+        cerr << "host is invalid" << endl;
+        exit(0);
+    }
     struct sockaddr_in addr;
     bzero((char *) &addr, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -539,6 +522,7 @@ int main(int argc, char *argv[]) {
         exit(0);
     }
 
+    char entry_buf[1024];
     read(clientSd, (char *) &entry_buf, sizeof(entry_buf));
     strcpy(server_log, "S->C ");
     strcat(server_log, entry_buf);
@@ -555,6 +539,7 @@ int main(int argc, char *argv[]) {
     strcat(user, username);
     strcat(user, "\r\n");
 
+    char user_buf[1024];
     write(clientSd, (char *) &user, strlen(user));
     read(clientSd, (char *) &user_buf, sizeof(user_buf));
     strcpy(server_log, "S->C ");
@@ -577,10 +562,11 @@ int main(int argc, char *argv[]) {
     strcat(pass, password);
     strcat(pass, "\r\n");
 
+    char pass_buffer[1024];
     write(clientSd, (char *) &pass, strlen(pass));
-    read(clientSd, (char *) &buffer, sizeof(buffer));
+    read(clientSd, (char *) &pass_buffer, sizeof(pass_buffer));
     strcpy(server_log, "S->C ");
-    strcat(server_log, buffer);
+    strcat(server_log, pass_buffer);
     strcpy(client_log, "C->S ");
     strcat(client_log, pass);
     if (logFlag) {
@@ -591,12 +577,12 @@ int main(int argc, char *argv[]) {
         cout << server_log;
     }
 
-    if (strcmp(strtok(buffer, " "), "230") != 0) {
+    if (strcmp(strtok(pass_buffer, " "), "230") != 0) {
         exit(0);
     }
 
     while (socketPoll(clientSd) == 1) {
-        read(clientSd, (char *) &buffer, sizeof(buffer));
+        read(clientSd, (char *) &pass_buffer, sizeof(pass_buffer));
     }
     if (socketPoll(clientSd) == -1) {
         cerr << "Error polling the socket" << endl;
@@ -647,14 +633,11 @@ int main(int argc, char *argv[]) {
     }
 
     char retr[15];
-    char receive_buf[1024];
-    char retr_feedback[200];
-    char transfer_feedback[200];
-    char quit_feedback[200];
     strcpy(retr, "RETR ");
     strcat(retr, file);
     strcat(retr, "\r\n");
 
+    char retr_feedback[512];
     write(clientSd, (char *) &retr, strlen(retr));
     read(clientSd, (char *) &retr_feedback, sizeof(retr_feedback));
     strcpy(server_log, "S->C ");
@@ -675,6 +658,7 @@ int main(int argc, char *argv[]) {
 
     std::ofstream newFile(file, std::ios::out | std::ios::binary);
 
+    char receive_buf[1024];
     int bytes_read = 0;
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
@@ -682,6 +666,8 @@ int main(int argc, char *argv[]) {
             newFile.write(receive_buf, bytes_read);
         }
     } while (bytes_read > 0);
+
+    char transfer_feedback[512];
     read(clientSd, (char *) &transfer_feedback, sizeof(transfer_feedback));
     strcpy(server_log, "S->C ");
     strcat(server_log, transfer_feedback);
@@ -695,6 +681,7 @@ int main(int argc, char *argv[]) {
     close(dataSd2);
 
     char quit[10];
+    char quit_feedback[512];
     strcpy(quit, "QUIT");
     strcat(quit, "\r\n");
     write(clientSd, (char *) &quit, strlen(quit));
