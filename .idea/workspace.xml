@@ -12,7 +12,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9a484461-df8d-4b04-9fc6-f14f71e5444a" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pftp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/pftp.cpp" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
@@ -29,8 +28,8 @@
       <file leaf-file-name="pftp.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pftp.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="37" column="20" selection-start-line="37" selection-start-column="20" selection-end-line="37" selection-end-column="20" />
+            <state relative-caret-position="-99">
+              <caret line="306" column="22" selection-start-line="306" selection-start-column="22" selection-end-line="306" selection-end-column="22" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -161,12 +160,12 @@
       <workItem from="1542261041898" duration="18589000" />
       <workItem from="1542344668907" duration="5753000" />
       <workItem from="1542442013280" duration="13789000" />
-      <workItem from="1542533410984" duration="1818000" />
+      <workItem from="1542533410984" duration="2085000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="41374000" />
+    <option name="totallyTimeSpent" value="41641000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1440" y="-277" width="1920" height="1177" extended-state="0" />
@@ -306,8 +305,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pftp.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="37" column="20" selection-start-line="37" selection-start-column="20" selection-end-line="37" selection-end-column="20" />
+        <state relative-caret-position="-99">
+          <caret line="306" column="22" selection-start-line="306" selection-start-column="22" selection-end-line="306" selection-end-column="22" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>

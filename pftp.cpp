@@ -67,13 +67,13 @@ void *downloadHandler(void *arguments) {
     if (clientSd < 0) {
         error_codes[args->startPos] = 7;
         cerr << "Cannot create socket" << endl;
-        return reinterpret_cast<void *>(7);
+        return nullptr;
     }
     struct hostent *host = gethostbyname(args->hostname);
     if (host == nullptr) {
         error_codes[args->startPos] = 7;
         cerr << "host is invalid" << endl;
-        return reinterpret_cast<void *>(7);
+        return nullptr;
     }
     struct sockaddr_in addr;
     bzero((char *) &addr, sizeof(addr));
@@ -84,7 +84,7 @@ void *downloadHandler(void *arguments) {
     if (connect(clientSd, (sockaddr *) &addr, sizeof(addr)) < 0) {
         error_codes[args->startPos] = 1;
         cerr << "Cannot connect to ftp server" << endl;
-        return reinterpret_cast<void *>(1);
+        return nullptr;
     }
 
     std::ofstream log_file(args->log, std::ios::out | std::ios::binary);
@@ -103,7 +103,7 @@ void *downloadHandler(void *arguments) {
     if (strcmp(strtok(entry_buf, " "), "220") != 0) {
         error_codes[args->startPos] = 1;
         cerr << "Failed to connect to server" << endl;
-        return reinterpret_cast<void *>(1);
+        return nullptr;
     }
 
     strcpy(user, "USER ");
@@ -126,7 +126,7 @@ void *downloadHandler(void *arguments) {
     if (strcmp(strtok(user_buf, " "), "331") != 0) {
         error_codes[args->startPos] = 2;
         cerr << "Failed to login" << endl;
-        return reinterpret_cast<void *>(2);
+        return nullptr;
     }
 
 
@@ -150,7 +150,7 @@ void *downloadHandler(void *arguments) {
     if (strcmp(strtok(buffer, " "), "230") != 0) {
         error_codes[args->startPos] = 2;
         cerr << "Failed to login" << endl;
-        return reinterpret_cast<void *>(2);
+        return nullptr;
     }
 
     while (socketPoll(clientSd) == 1) {
@@ -159,7 +159,7 @@ void *downloadHandler(void *arguments) {
     if (socketPoll(clientSd) == -1) {
         error_codes[args->startPos] = 7;
         cerr << "Error polling the socket" << endl;
-        return reinterpret_cast<void *>(7);
+        return nullptr;
     }
 
     char type[12];
@@ -213,13 +213,13 @@ void *downloadHandler(void *arguments) {
     if (dataSd2 < 0) {
         error_codes[args->startPos] = 7;
         cerr << "could not create socket" << endl;
-        return reinterpret_cast<void *>(7);
+        return nullptr;
     }
 
     if (connect(dataSd2, (struct sockaddr *) &servAddr3, sizeof(servAddr3)) < 0) {
         error_codes[args->startPos] = 1;
         cerr << "could not establish connection" << endl;
-        return reinterpret_cast<void *>(1);
+        return nullptr;
     }
 
     char size[30];
@@ -278,7 +278,7 @@ void *downloadHandler(void *arguments) {
     if (strcmp(strtok(temp3, " "), "350") != 0) {
         error_codes[args->startPos] = 5;
         cerr << "Could not set restart position" << endl;
-        return reinterpret_cast<void *>(5);
+        return nullptr;
     }
 
     char retr[10];
@@ -304,7 +304,7 @@ void *downloadHandler(void *arguments) {
     if (strcmp(strtok(feedback, " "), "150") != 0) {
         error_codes[args->startPos] = 5;
         cerr << "Could not initiate file retrieval" << endl;
-        return reinterpret_cast<void *>(5);
+        return nullptr;
     }
 
     std::ofstream newFile(args->file, std::ios::out | std::ios::binary);
