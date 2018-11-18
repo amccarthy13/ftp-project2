@@ -312,17 +312,40 @@ void *downloadHandler(void *arguments) {
         }
     } while (bytes_read > 0);
 
+    char transfer_feedback[512];
+    read(clientSd, (char *) &transfer_feedback, sizeof(transfer_feedback));
+    strcpy(server_log, "S->C ");
+    strcat(server_log, transfer_feedback);
+    if (logFlag) {
+        log_file.write(server_log, strlen(server_log));
+    } else {
+        cout << server_log;
+    }
+
     newFile.close();
     close(dataSd2);
 
     char quit[10];
+    char quit_feedback[256];
     strcpy(quit, "QUIT");
     strcat(quit, "\r\n");
     write(clientSd, (char *) &quit, strlen(quit));
-
+    read(clientSd, (char *) &quit_feedback, sizeof(quit_feedback));
+    strcpy(server_log, "S->C ");
+    strcat(server_log, quit_feedback);
+    strcpy(client_log, "C->S ");
+    strcat(client_log, quit);
+    if (logFlag) {
+        log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
+    } else {
+        cout << client_log;
+        cout << server_log;
+    }
     if (!logFlag) {
         remove(args->log);
     }
+
     return nullptr;
 }
 
