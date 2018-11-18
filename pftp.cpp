@@ -56,7 +56,7 @@ void *downloadHandler(void *arguments) {
 
     char user[11];
     char pass[16];
-    char buffer[1500];
+    char buffer[1024];
     char server_log[512];
     char client_log[512];
 
@@ -146,7 +146,7 @@ void *downloadHandler(void *arguments) {
     if (socketPoll(clientSd) == -1) {
         cerr << "Error polling the socket" << endl;
     }
-    
+
     char type[12];
     strcpy(type, args->mode);
     strcat(type, "\r\n");
@@ -163,11 +163,6 @@ void *downloadHandler(void *arguments) {
     } else {
         cout << client_log;
         cout << server_log;
-    }
-
-    if (strcmp(strtok(verify, " "), "200") != 0) {
-        cerr << "Failed to switch modes" << endl;
-        exit(0);
     }
 
     char passive[30];
@@ -584,29 +579,6 @@ int main(int argc, char *argv[]) {
 
     int dataSd2;
     int a1, a2, a3, a4, p1, p2;
-
-    char type[11];
-    strcpy(type, mode);
-    strcat(type, "\r\n");
-    char verify[256];
-    write(clientSd, (char *) &type, strlen(type));
-    read(clientSd, (char *) &verify, sizeof(verify));
-    strcpy(server_log, "S->C ");
-    strcat(server_log, verify);
-    strcpy(client_log, "C->S ");
-    strcat(client_log, type);
-    if (logFlag) {
-        log_file.write(client_log, strlen(client_log));
-        log_file.write(server_log, strlen(server_log));
-    } else {
-        cout << client_log;
-        cout << server_log;
-    }
-
-    if (strcmp(strtok(verify, " "), "200") != 0) {
-        cerr << "Failed to switch modes" << endl;
-        exit(0);
-    }
 
     char passive[30];
     char temp[256];

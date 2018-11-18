@@ -1,16 +1,1 @@
-S->C 220 Authorized Users Only
-C->S USER sockprogramming
-S->C 331 Please specify the password.
-C->S PASS rocks
-S->C 230 Login successful.
-password.
-C->S Type I
-S->C 200 Switching to Binary mode.
-C->S PASV
-S->C 227 Entering Passive Mode (128,135,164,133,192,141).
-C->S SIZE rfc959.pdf
-S->C 213 233602
-C->S REST 116801
-S->C 350 Restart position accepted (116801).
-C->S RETR rfc959.pdf
-S->C 150 Opening BINARY mode data connection for rfc959.pdf (233602 bytes).
+S
