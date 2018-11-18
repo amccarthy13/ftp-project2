@@ -270,7 +270,7 @@ void *downloadHandler(void *arguments) {
     }
 
     char retr[10];
-    char receive_buf[1024];
+    char receive_buf[5000];
     char feedback[200];
     strcpy(retr, "RETR ");
     strcat(retr, args->file);
@@ -301,16 +301,17 @@ void *downloadHandler(void *arguments) {
     int new_bytes = 0;
     int bytes_read = 0;
     int bytes_to_read = end - start + 1;
+    bool done_flag = true;
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
         total_bytes += bytes_read;
         if (bytes_read > 0) {
-            if (total_bytes > bytes_to_read) {
+            if (total_bytes > bytes_to_read && done_flag) {
                 new_bytes = total_bytes - bytes_to_read;
                 new_bytes = bytes_read - new_bytes;
                 newFile.write(receive_buf, new_bytes);
-                break;
-            } else {
+                done_flag = false;
+            } else if (done_flag) {
                 newFile.write(receive_buf, bytes_read);
             }
         }
@@ -658,7 +659,7 @@ int main(int argc, char *argv[]) {
 
     std::ofstream newFile(file, std::ios::out | std::ios::binary);
 
-    char receive_buf[1024];
+    char receive_buf[5000];
     int bytes_read = 0;
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
