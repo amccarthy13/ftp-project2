@@ -50,12 +50,9 @@ void *downloadHandler(void *arguments) {
     int dataSd2;
     int a1, a2, a3, a4, p1, p2;
     int fileSize;
+    bool logFlag;
 
     struct arg_struct *args = (struct arg_struct *) arguments;
-
-    std::ofstream log_file(args->log, std::ios::out | std::ios::binary);
-
-    bool logFlag = strcmp(args->log, "-") != 0;
 
     char user[11];
     char pass[16];
@@ -80,6 +77,10 @@ void *downloadHandler(void *arguments) {
         exit(0);
     }
 
+    std::ofstream log_file(args->log, std::ios::out | std::ios::binary);
+
+    logFlag = strcmp(args->log, "-") != 0;
+
     read(clientSd, (char *) &buffer, sizeof(buffer));
     strcpy(server_log, "S->C ");
     strcat(server_log, buffer);
@@ -88,6 +89,7 @@ void *downloadHandler(void *arguments) {
     } else {
         cout << server_log;
     }
+
     if (strcmp(strtok(buffer, " "), "220") != 0) {
         cerr << "Failed to connect to server" << endl;
         exit(0);
@@ -104,16 +106,17 @@ void *downloadHandler(void *arguments) {
     strcpy(client_log, "C->S ");
     strcat(client_log, user);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
     if (strcmp(strtok(buffer, " "), "331") != 0) {
         cerr << "Failed to login" << endl;
         exit(0);
     }
+
 
     strcpy(pass, "PASS ");
     strcat(pass, args->password);
@@ -126,11 +129,11 @@ void *downloadHandler(void *arguments) {
     strcpy(client_log, "C->S ");
     strcat(client_log, pass);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
     if (strcmp(strtok(buffer, " "), "230") != 0) {
         cerr << "Failed to login" << endl;
@@ -155,11 +158,11 @@ void *downloadHandler(void *arguments) {
     strcpy(client_log, "C->S ");
     strcat(client_log, type);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
 
     if (strcmp(strtok(verify, " "), "200") != 0) {
@@ -178,11 +181,11 @@ void *downloadHandler(void *arguments) {
     strcpy(client_log, "C->S ");
     strcat(client_log, passive);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
 
     sscanf(temp, "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d)",
@@ -220,11 +223,11 @@ void *downloadHandler(void *arguments) {
     strcpy(client_log, "C->S ");
     strcat(client_log, size);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
 
     sscanf(temp2, "213 %d",
@@ -254,11 +257,11 @@ void *downloadHandler(void *arguments) {
     strcpy(client_log, "C->S ");
     strcat(client_log, rest);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
     if (strcmp(strtok(temp3, " "), "350") != 0) {
         cerr << "Could not set restart position" << endl;
@@ -279,11 +282,11 @@ void *downloadHandler(void *arguments) {
     strcpy(client_log, "C->S ");
     strcat(client_log, retr);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
     if (strcmp(strtok(feedback, " "), "150") != 0) {
         cerr << "Could not initiate file retrieval" << endl;
@@ -561,11 +564,11 @@ int main(int argc, char *argv[]) {
     strcpy(client_log, "C->S ");
     strcat(client_log, pass);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
 
     if (strcmp(strtok(pass_buf, " "), "230") != 0) {
@@ -593,11 +596,11 @@ int main(int argc, char *argv[]) {
     strcpy(client_log, "C->S ");
     strcat(client_log, type);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
 
     if (strcmp(strtok(verify, " "), "200") != 0) {
@@ -616,11 +619,11 @@ int main(int argc, char *argv[]) {
     strcpy(client_log, "C->S ");
     strcat(client_log, passive);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
 
     sscanf(temp, "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d)",
@@ -661,11 +664,11 @@ int main(int argc, char *argv[]) {
     strcpy(client_log, "C->S ");
     strcat(client_log, retr);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout <<client_log;
+        cout << server_log;
     }
     if (strcmp(strtok(retrive_feedback, " "), "150") != 0) {
         cerr << "could not retrieve file" << endl;
@@ -703,11 +706,11 @@ int main(int argc, char *argv[]) {
     strcpy(client_log, "C->S ");
     strcat(client_log, quit);
     if (logFlag) {
-        log_file.write(server_log, strlen(server_log));
         log_file.write(client_log, strlen(client_log));
+        log_file.write(server_log, strlen(server_log));
     } else {
-        cout << server_log;
         cout << client_log;
+        cout << server_log;
     }
     if (!logFlag) {
         remove(log);
