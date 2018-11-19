@@ -469,7 +469,7 @@ int main(int argc, char *argv[]) {
             pthread_join(threads[i], nullptr);
         }
 
-        for (int j = 0; j < sizeof(error_codes)/ sizeof(error_codes[0]); j++) {
+        for (int j = 0; j < sizeof(error_codes) / sizeof(error_codes[0]); j++) {
             if (error_codes[j] != 0) {
                 for (int x = 0; x < streamCount; x++) {
                     remove(stream_args[x].file);
@@ -583,6 +583,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (strcmp(strtok(user_buf, " "), "331") != 0) {
+        cerr << "Username incorrect" << endl;
         exit(2);
     }
 
@@ -606,6 +607,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (strcmp(strtok(pass_buffer, " "), "230") != 0) {
+        cerr << "Unable to login" << endl;
         exit(2);
     }
 
@@ -614,6 +616,7 @@ int main(int argc, char *argv[]) {
     }
     if (socketPoll(clientSd) == -1) {
         cerr << "Error polling the socket" << endl;
+        exit(7);
     }
 
     int dataSd2;
@@ -676,7 +679,7 @@ int main(int argc, char *argv[]) {
         log_file.write(client_log, strlen(client_log));
         log_file.write(server_log, strlen(server_log));
     } else {
-        cout <<client_log;
+        cout << client_log;
         cout << server_log;
     }
     if (strcmp(strtok(retr_feedback, " "), "150") != 0) {
