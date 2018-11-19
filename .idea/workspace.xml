@@ -30,8 +30,8 @@
       <file leaf-file-name="pftp.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pftp.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="382">
-              <caret line="487" column="28" lean-forward="true" selection-start-line="487" selection-start-column="28" selection-end-line="487" selection-end-column="28" />
+            <state relative-caret-position="514">
+              <caret line="449" column="17" selection-start-line="449" selection-start-column="17" selection-end-line="449" selection-end-column="17" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -42,8 +42,8 @@
       <file leaf-file-name="test.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
+            <state relative-caret-position="15">
+              <caret line="1" column="61" selection-start-line="1" selection-start-column="61" selection-end-line="1" selection-end-column="61" />
             </state>
           </provider>
         </entry>
@@ -71,6 +71,7 @@
       <find>receive_buf</find>
       <find>ofstream</find>
       <find>exit</find>
+      <find>mutex</find>
     </findStrings>
     <replaceStrings>
       <replace>server_log</replace>
@@ -166,12 +167,12 @@
       <workItem from="1542261041898" duration="18589000" />
       <workItem from="1542344668907" duration="5753000" />
       <workItem from="1542442013280" duration="13789000" />
-      <workItem from="1542533410984" duration="14432000" />
+      <workItem from="1542533410984" duration="15391000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="53988000" />
+    <option name="totallyTimeSpent" value="54947000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1440" y="-300" width="1920" height="1200" extended-state="0" />
@@ -316,15 +317,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
+        <state relative-caret-position="15">
+          <caret line="1" column="61" selection-start-line="1" selection-start-column="61" selection-end-line="1" selection-end-column="61" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pftp.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="382">
-          <caret line="487" column="28" lean-forward="true" selection-start-line="487" selection-start-column="28" selection-end-line="487" selection-end-column="28" />
+        <state relative-caret-position="514">
+          <caret line="449" column="17" selection-start-line="449" selection-start-column="17" selection-end-line="449" selection-end-column="17" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>

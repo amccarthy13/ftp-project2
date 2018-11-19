@@ -18,6 +18,7 @@
 #include <thread>
 #include <vector>
 #include <csignal>
+#include <mutex>
 
 using namespace std;
 
@@ -308,7 +309,7 @@ void *downloadHandler(void *arguments) {
 
     char file_name[15];
     sprintf(file_name, "%d", args->startPos);
-    std::mutex mu;
+    mutex mu;
     std::ofstream newFile(file_name, std::ios::out | std::ios::binary);
 
 
@@ -436,6 +437,9 @@ int main(int argc, char *argv[]) {
             while (!myFile.eof()) {
                 myFile >> input;
                 char *token = strtok(input, ":/@");
+                if (token == nullptr) {
+                    break;
+                }
                 if (strcmp(token, "ftp") != 0) {
                     cerr << "invalid config file" << endl;
                     exit(4);
@@ -443,8 +447,7 @@ int main(int argc, char *argv[]) {
 
                 token = strtok(nullptr, ":/@");
                 if (token == nullptr) {
-                    cerr << "invalid config file" << endl;
-                    exit(4);
+                    break;
                 }
                 strcpy(username, token);
 

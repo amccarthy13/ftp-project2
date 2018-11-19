@@ -1,4 +1,2 @@
-ftp://cs23300:youcandoit@ftp1.cs.uchicago.edu/lecture8.pdf
-ftp://sockprogramming:rocks@ftp2.cs.uchicago.edu/lecture8.pdf
-ftp://sockprogramming:rocks@ftp2.cs.uchicago.edu/lecture8.pdf
-ftp://sockprogramming:rocks@ftp2.cs.uchicago.edu/lecture8.pdf
+ftp://cs23300:youcandoit@ftp1.cs.uchicago.edu/rfc959.pdf
+ftp://sockprogramming:rocks@ftp2.cs.uchicago.edu/rfc959.pdf
