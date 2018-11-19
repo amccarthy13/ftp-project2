@@ -13,7 +13,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9a484461-df8d-4b04-9fc6-f14f71e5444a" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pftp.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/pftp.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test.txt" afterDir="false" />
     </list>
@@ -31,8 +30,8 @@
       <file leaf-file-name="pftp.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pftp.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="388" column="49" selection-start-line="388" selection-start-column="48" selection-end-line="388" selection-end-column="49" />
+            <state relative-caret-position="382">
+              <caret line="487" column="28" lean-forward="true" selection-start-line="487" selection-start-column="28" selection-end-line="487" selection-end-column="28" />
               <folding>
                 <element signature="e#0#19#0" expanded="true" />
               </folding>
@@ -43,8 +42,8 @@
       <file leaf-file-name="test.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="52" selection-start-column="52" selection-end-column="52" />
+            <state relative-caret-position="45">
+              <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -52,8 +51,8 @@
       <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="8" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="8" />
+            <state relative-caret-position="30">
+              <caret line="2" selection-start-line="2" selection-end-line="16" selection-end-column="75" />
             </state>
           </provider>
         </entry>
@@ -66,11 +65,12 @@
       <find>entry_log</find>
       <find>entry_buf</find>
       <find>hostname</find>
-      <find>exit</find>
       <find>error_codes</find>
       <find>server</find>
       <find>receive</find>
       <find>receive_buf</find>
+      <find>ofstream</find>
+      <find>exit</find>
     </findStrings>
     <replaceStrings>
       <replace>server_log</replace>
@@ -85,8 +85,8 @@
       <list>
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/Makefile" />
-        <option value="$PROJECT_DIR$/test.txt" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/test.txt" />
         <option value="$PROJECT_DIR$/pftp.cpp" />
       </list>
     </option>
@@ -100,11 +100,11 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths />
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" fullScreen="true">
     <option name="x" value="1440" />
-    <option name="y" value="-277" />
+    <option name="y" value="-300" />
     <option name="width" value="1920" />
-    <option name="height" value="1177" />
+    <option name="height" value="1200" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -166,20 +166,20 @@
       <workItem from="1542261041898" duration="18589000" />
       <workItem from="1542344668907" duration="5753000" />
       <workItem from="1542442013280" duration="13789000" />
-      <workItem from="1542533410984" duration="6946000" />
+      <workItem from="1542533410984" duration="14432000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="46502000" />
+    <option name="totallyTimeSpent" value="53988000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1440" y="-277" width="1920" height="1177" extended-state="0" />
+    <frame x="1440" y="-300" width="1920" height="1200" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="CMake" order="7" visible="true" weight="0.087941974" />
+      <window_info anchor="bottom" id="CMake" order="7" visible="true" weight="0.08449478" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -201,6 +201,11 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="2" />
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/pftp.cpp">
@@ -302,24 +307,24 @@
     <entry file="file://$PROJECT_DIR$/logfile.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.txt">
+    <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="52" selection-start-column="52" selection-end-column="52" />
+        <state relative-caret-position="30">
+          <caret line="2" selection-start-line="2" selection-end-line="16" selection-end-column="75" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
+    <entry file="file://$PROJECT_DIR$/test.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="8" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="8" />
+        <state relative-caret-position="45">
+          <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pftp.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="388" column="49" selection-start-line="388" selection-start-column="48" selection-end-line="388" selection-end-column="49" />
+        <state relative-caret-position="382">
+          <caret line="487" column="28" lean-forward="true" selection-start-line="487" selection-start-column="28" selection-end-line="487" selection-end-column="28" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>

@@ -306,30 +306,36 @@ void *downloadHandler(void *arguments) {
         return nullptr;
     }
 
-    std::ofstream newFile(args->file, std::ios::out | std::ios::binary);
+    char file_name[15];
+    sprintf(file_name, "%d", args->startPos);
+    std::mutex mu;
+    std::ofstream newFile(file_name, std::ios::out | std::ios::binary);
 
-    newFile.seekp(start);
 
     char receive_buf[3072];
     int total_bytes = 0;
     int new_bytes = 0;
     int bytes_read = 0;
     int bytes_to_read = end - start + 1;
-    bool done_flag = true;
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
         total_bytes += bytes_read;
         if (bytes_read > 0) {
-            if (total_bytes > bytes_to_read && done_flag) {
+            if (total_bytes > bytes_to_read) {
                 new_bytes = total_bytes - bytes_to_read;
                 new_bytes = bytes_read - new_bytes;
                 newFile.write(receive_buf, new_bytes);
-                done_flag = false;
-            } else if (done_flag) {
+                std::flush(newFile);
+                break;
+            } else {
                 newFile.write(receive_buf, bytes_read);
+                std::flush(newFile);
             }
         }
     } while (bytes_read > 0);
+
+    newFile.close();
+    close(dataSd2);
 
     char transfer_feedback[512];
     read(clientSd, (char *) &transfer_feedback, sizeof(transfer_feedback));
@@ -340,9 +346,6 @@ void *downloadHandler(void *arguments) {
     } else {
         cout << server_log;
     }
-
-    newFile.close();
-    close(dataSd2);
 
     char quit[10];
     char quit_feedback[256];
@@ -480,6 +483,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        logFlag = strcmp(log, "-") != 0;
 
         pthread_t thread_id;
         for (int i = 0; i < streamCount; i++) {
@@ -493,15 +497,39 @@ int main(int argc, char *argv[]) {
             pthread_join(threads[i], nullptr);
         }
 
+
+        std::ofstream fout(file, std::ios_base::binary);
+
+        for (int x = 0; x < streamCount; x++) {
+            char file_name[15];
+            sprintf(file_name, "%d", x);
+
+            std::ifstream file1(file_name, std::ios_base::binary);
+            fout << file1.rdbuf();
+            file1.close();
+            remove(file_name);
+        }
+        fout.close();
+
         for (int j = 0; j < sizeof(error_codes) / sizeof(error_codes[0]); j++) {
             if (error_codes[j] != 0) {
                 for (int x = 0; x < streamCount; x++) {
                     remove(stream_args[x].file);
                 }
+                for (int y = 0; y < streamCount; y++) {
+                    char file_name[15];
+                    sprintf(file_name, "%d", y);
+                    remove(file_name);
+                }
+                if (!logFlag) {
+                    remove("-");
+                }
                 cerr << "Error during download" << endl;
                 exit(error_codes[j]);
             }
         }
+
+
         return 0;
     }
 
@@ -556,11 +584,17 @@ int main(int argc, char *argv[]) {
     int clientSd = socket(AF_INET, SOCK_STREAM, 0);
     if (clientSd < 0) {
         cerr << "Cannot create socket" << endl;
+        if (!logFlag) {
+            remove("-");
+        }
         exit(7);
     }
     struct hostent *host = gethostbyname(hostname);
     if (host == nullptr) {
         cerr << "host is invalid" << endl;
+        if (!logFlag) {
+            remove("-");
+        }
         exit(4);
     }
     struct sockaddr_in addr;
@@ -571,6 +605,9 @@ int main(int argc, char *argv[]) {
     addr.sin_port = htons(port);
     if (connect(clientSd, (sockaddr *) &addr, sizeof(addr)) < 0) {
         cerr << "Cannot connect to ftp server" << endl;
+        if (!logFlag) {
+            remove("-");
+        }
         exit(0);
     }
 
@@ -584,6 +621,9 @@ int main(int argc, char *argv[]) {
         cout << server_log;
     }
     if (strcmp(strtok(entry_buf, " "), "220") != 0) {
+        if (!logFlag) {
+            remove("-");
+        }
         exit(1);
     }
 
@@ -608,6 +648,9 @@ int main(int argc, char *argv[]) {
 
     if (strcmp(strtok(user_buf, " "), "331") != 0) {
         cerr << "Username incorrect" << endl;
+        if (!logFlag) {
+            remove("-");
+        }
         exit(2);
     }
 
@@ -632,6 +675,9 @@ int main(int argc, char *argv[]) {
 
     if (strcmp(strtok(pass_buffer, " "), "230") != 0) {
         cerr << "Unable to login" << endl;
+        if (!logFlag) {
+            remove("-");
+        }
         exit(2);
     }
 
@@ -640,6 +686,9 @@ int main(int argc, char *argv[]) {
     }
     if (socketPoll(clientSd) == -1) {
         cerr << "Error polling the socket" << endl;
+        if (!logFlag) {
+            remove("-");
+        }
         exit(7);
     }
 
@@ -679,11 +728,17 @@ int main(int argc, char *argv[]) {
     dataSd2 = socket(AF_INET, SOCK_STREAM, 0);
     if (dataSd2 < 0) {
         cerr << "could not create socket" << endl;
+        if (!logFlag) {
+            remove("-");
+        }
         exit(7);
     }
 
     if (connect(dataSd2, (struct sockaddr *) &servAddr3, sizeof(servAddr3)) < 0) {
         cerr << "could not establish connection" << endl;
+        if (!logFlag) {
+            remove("-");
+        }
         exit(1);
     }
 
@@ -708,6 +763,9 @@ int main(int argc, char *argv[]) {
     }
     if (strcmp(strtok(retr_feedback, " "), "150") != 0) {
         cerr << "could not retrieve file" << endl;
+        if (!logFlag) {
+            remove("-");
+        }
         exit(5);
     }
 
