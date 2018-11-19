@@ -282,7 +282,6 @@ void *downloadHandler(void *arguments) {
     }
 
     char retr[10];
-    char receive_buf[5000];
     char feedback[200];
     strcpy(retr, "RETR ");
     strcat(retr, args->file);
@@ -310,6 +309,8 @@ void *downloadHandler(void *arguments) {
     std::ofstream newFile(args->file, std::ios::out | std::ios::binary);
 
     newFile.seekp(start);
+
+    char receive_buf[3072];
     int total_bytes = 0;
     int new_bytes = 0;
     int bytes_read = 0;
@@ -377,21 +378,44 @@ int main(int argc, char *argv[]) {
     char mode[20] = "Type I";
     char log[32] = "-";
     bool logFlag;
-    if (argc < 3) {
-        cerr << "Not enough arguments provided" << endl;
-        exit(4);
+    if (argc == 1) {
+
     }
 
-    if (strcmp(argv[1], "-t") == 0 || strcmp(argv[1], "-thread") == 0) {
+    if (argc == 1 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0 ) {
+        cout << "program name: pftp\n"
+                "Program downloads files from ftp servers.\n"
+                "required Flags: -s (hostname) -f (file name)\n"
+                "optional flags: -v | --version : returns application name, version number and author name.\n"
+                "                -h | --help : prints synopsis of application\n"
+                "                -p | --port : specifies port to be used for contacting ftp server\n"
+                "                -n | --username : specifies username for logging into server\n"
+                "                -P | --password : specifies password for logging into server\n"
+                "                -l | --log : specifies logfile for logging commands to and from ftp server. if logfile is set to \"-\"\n"
+                "                             all commands and server messages are printed to stdout\n"
+                "                -t | --thread : specifies config file which should contain the login, password, hostname, and absolute path to the file.\n"
+                "                     One can specify multiple servers for multi-threaded downloading. Note: if using a config file no hostname or file can\n"
+                "                     be specified in the options.  Any password or username specified in the options will be overwritten by the values\n"
+                "                     in the config file\n"
+                "                If no flags are passed the application synopsis is returned" << endl;
+        return 0;
+    }
+
+    if (strcmp(argv[1], "-v") == 0 || strcmp(argv[1], "--version") == 0 ) {
+        cout << "pftp client, version 0.1, Andrew McCarthy" << endl;
+        return 0;
+    }
+
+    if (strcmp(argv[1], "-t") == 0 ) {
         if (argc > 3) {
             for (int i = 3; i < argc - 1; i += 2) {
-                if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "-port") == 0) {
+                if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--port") == 0) {
                     port = atoi(argv[i + 1]);
-                } else if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "-username") == 0) {
+                } else if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "--username") == 0) {
                     strcpy(username, argv[i + 1]);
-                } else if (strcmp(argv[i], "-P") == 0 || strcmp(argv[i], "-password") == 0) {
+                } else if (strcmp(argv[i], "-P") == 0 || strcmp(argv[i], "--password") == 0) {
                     strcpy(password, argv[i + 1]);
-                } else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "-logfile") == 0) {
+                } else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--logfile") == 0) {
                     strcpy(log, argv[i + 1]);
                 } else {
                     cerr << "invalid option" << endl;
@@ -505,13 +529,13 @@ int main(int argc, char *argv[]) {
     }
     if (argc > 5) {
         for (int i = 5; i < argc - 1; i += 2) {
-            if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "-port") == 0) {
+            if (strcmp(argv[i], "-p") == 0 || strcmp(argv[i], "--port") == 0) {
                 port = atoi(argv[i + 1]);
-            } else if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "-username") == 0) {
+            } else if (strcmp(argv[i], "-n") == 0 || strcmp(argv[i], "--username") == 0) {
                 strcpy(username, argv[i + 1]);
-            } else if (strcmp(argv[i], "-P") == 0 || strcmp(argv[i], "-password") == 0) {
+            } else if (strcmp(argv[i], "-P") == 0 || strcmp(argv[i], "--password") == 0) {
                 strcpy(password, argv[i + 1]);
-            } else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "-logfile") == 0) {
+            } else if (strcmp(argv[i], "-l") == 0 || strcmp(argv[i], "--logfile") == 0) {
                 strcpy(log, argv[i + 1]);
             } else {
                 cerr << "invalid option" << endl;
@@ -689,7 +713,7 @@ int main(int argc, char *argv[]) {
 
     std::ofstream newFile(file, std::ios::out | std::ios::binary);
 
-    char receive_buf[5000];
+    char receive_buf[3072];
     int bytes_read = 0;
     do {
         bytes_read = recv(dataSd2, receive_buf, sizeof(receive_buf), 0);
