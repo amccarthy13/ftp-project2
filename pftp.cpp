@@ -382,9 +382,6 @@ int main(int argc, char *argv[]) {
     char mode[20] = "Type I";
     char log[32] = "-";
     bool logFlag;
-    if (argc == 1) {
-
-    }
 
     if (argc == 1 || strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0 ) {
         cout << "program name: pftp\n"
@@ -484,9 +481,19 @@ int main(int argc, char *argv[]) {
                 stream_args[streamCount] = args;
                 streamCount++;
             }
+        } else {
+            cerr << "config file not found" << endl;
+            exit(4);
         }
 
         logFlag = strcmp(log, "-") != 0;
+
+        for (int y = 0; y < streamCount - 1; y++) {
+            if (strcmp(stream_args[y].file , stream_args[y + 1].file) != 0) {
+                cerr << "multithreaded download files are not all the same" << endl;
+                exit(4);
+            }
+        }
 
         pthread_t thread_id;
         for (int i = 0; i < streamCount; i++) {
