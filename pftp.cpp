@@ -34,7 +34,7 @@ struct arg_struct {
     int endPos;
 };
 
-
+//test
 pthread_t threads[15];
 int error_codes[15];
 
