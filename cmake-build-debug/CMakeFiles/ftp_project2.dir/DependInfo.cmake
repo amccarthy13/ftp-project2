@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/andrewM/CLionProjects/ftp-project2/pftp.cpp" "/Users/andrewM/CLionProjects/ftp-project2/cmake-build-debug/CMakeFiles/ftp_project2.dir/pftp.cpp.o"
+  "/Users/andrewmccarthy/Documents/GitHub/ftp-project2/pftp.cpp" "/Users/andrewmccarthy/Documents/GitHub/ftp-project2/cmake-build-debug/CMakeFiles/ftp_project2.dir/pftp.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "AppleClang")
 

@@ -1,4 +1,4 @@
-# Install script for directory: /Users/andrewM/CLionProjects/ftp-project2
+# Install script for directory: /Users/andrewmccarthy/Documents/GitHub/ftp-project2
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/andrewM/CLionProjects/ftp-project2/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/andrewmccarthy/Documents/GitHub/ftp-project2/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
